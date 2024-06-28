@@ -11,5 +11,26 @@ function normalizeURL(input, base) {
   return fullPath;
 }
 
-export { normalizeURL };
+function getURLsFromHTML(body, baseURL) {
+  const dom = new JSDOM(body);
+  const anchors = dom.window.document.querySelectorAll('a');
+  let result = [];
+
+  for (const anchor of anchors) {
+    if (!anchor.hasAttribute("href")) {
+      continue;
+    }
+
+    try {
+      const href = new URL(anchor.getAttribute("href"), baseURL).href;
+      result.push(href);
+    } catch(err) {
+      console.log(`${err.message}: ${href}`);
+    }
+  }
+
+  return result;
+}
+
+export { normalizeURL, getURLsFromHTML };
 
