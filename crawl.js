@@ -70,7 +70,7 @@ async function crawlPage(baseURL, currentURL = baseURL, pages = {}) {
     }
    
   } catch(err) {
-    console.log(`${err.message}: ${url}`);
+    console.error(`${err.message}: ${currentURL}`);
   }
 
   return pages;
