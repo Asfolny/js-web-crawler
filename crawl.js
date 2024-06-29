@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 
-function normalizeURL(input, base) {
-  const url = new URL(input, base);
+function normalizeURL(input) {
+  const url = new URL(input);
   let fullPath = `${url.host}${url.pathname}`;
 
   if (fullPath.slice(-1) === '/') {
@@ -32,23 +32,48 @@ function getURLsFromHTML(body, baseURL) {
   return result;
 }
 
+async function getURLsFromPage(url, baseURL) {
+  const response = await fetch(url);
+
+  if (response.status >= 400) {
+    throw new Error("Err response");
+  }
+
+  if (!response.headers.get("content-type").includes("text/html")) {
+    throw new Error("Not HTML Body");
+  }
+
+  const html = await response.text();
+
+  return getURLsFromHTML(html, baseURL);
+}
+
 async function crawlPage(baseURL, currentURL = baseURL, pages = {}) {
   try {
-    const response = await fetch(url);
+    const base = normalizeURL(baseURL);
+    const current = normalizeURL(currentURL);
 
-    if (response.status >= 400) {
-      throw new Error("Err response");
+    if (current.includes(base) === false) {
+      throw new Error("Outside of base host, this is not supported");
     }
 
-    if (!response.headers.get("content-type").includes("text/html")) {
-      throw new Error("Not HTML Body");
+    if (current in pages) {
+      pages[current]++;
+      return pages;
     }
+    pages[current] = 1;
 
-    const html = await response.text();
-    console.log(html);
+    const nextArr = await getURLsFromPage(currentURL, baseURL);
+
+    for (const url of nextArr) {
+      await crawlPage(baseURL, url, pages);
+    }
+   
   } catch(err) {
     console.log(`${err.message}: ${url}`);
   }
+
+  return pages;
 }
 
 export { normalizeURL, getURLsFromHTML, crawlPage };
