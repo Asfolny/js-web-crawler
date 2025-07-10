@@ -1,23 +1,24 @@
 {
-  "name": "js-web-crawler-boot-dev",
+  "name": "web-crawler",
   "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "description": "SEO link analyzer",
   "type": "module",
   "scripts": {
-    "start": "node main.js 2> /dev/null",
-    "start-verbose": "node main.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "start": "tsx ./src/index.ts",
+    "test": "vitest run"
   },
-  "jest": {
-    "transform": {}
-  },
-  "author": "",
-  "license": "ISC",
+  "author": "wagslane",
+  "keywords": [],
   "devDependencies": {
-    "jest": "^29.7.0"
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.10.6",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
-    "jsdom": "^24.1.0"
+    "jsdom": "^26.0.0",
+    "p-limit": "^6.1.0"
   }
 }
+
